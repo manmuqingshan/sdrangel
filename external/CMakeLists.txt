@@ -783,7 +783,7 @@ if ((LINUX OR APPLE) AND (NOT LIBSIGMF_FOUND OR LIBSIGMF_EXTERNAL))
             PREFIX "${EXTERNAL_BUILD_LIBRARIES}/libsigmf"
             CMAKE_ARGS ${COMMON_CMAKE_ARGS} -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
             UPDATE_DISCONNECTED TRUE
-            PATCH_COMMAND sed -i '' "s/-Werror//g" <SOURCE_DIR>/external/flatbuffers/CMakeLists.txt
+            PATCH_COMMAND sed -i "" -e "s/-Werror//g" -e "s/VERSION 2.8/VERSION 3.10/g" <SOURCE_DIR>/external/flatbuffers/CMakeLists.txt
             BUILD_BYPRODUCTS "${LIBSIGMF_LIBRARIES}"
             TEST_COMMAND ""
             )
