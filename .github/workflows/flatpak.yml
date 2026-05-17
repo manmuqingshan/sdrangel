@@ -14,6 +14,8 @@ permissions:
 jobs:
   build_flatpak:
     runs-on: ubuntu-latest
+    env:
+      ARCH: x86_64
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,23 +25,26 @@ jobs:
         id: get_version
         run: |
           if [[ "$GITHUB_REF_NAME" == "flatpak" ]]; then
-            echo "version=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+            echo "version=${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
           else
             echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
           fi
+      - name: Validate runner architecture
+        run: |
+          test "$(uname -m)" = "$ARCH"
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
-          bundle: sdrangel-${{ steps.get_version.outputs.version }}-x86_64.flatpak
+          bundle: sdrangel-${{ steps.get_version.outputs.version }}-${{ env.ARCH }}.flatpak
           manifest-path: flatpak/org.sdrangel.SDRangel.yaml
           cache-key: flatpak-builder-${{ github.sha }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sdrangel-${{ steps.get_version.outputs.version }}-x86_64.flatpak
-          path: sdrangel-${{ steps.get_version.outputs.version }}-x86_64.flatpak
+          name: sdrangel-${{ steps.get_version.outputs.version }}-${{ env.ARCH }}.flatpak
+          path: sdrangel-${{ steps.get_version.outputs.version }}-${{ env.ARCH }}.flatpak
       - name: Upload release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: sdrangel-${{ steps.get_version.outputs.version }}-x86_64.flatpak
+          files: sdrangel-${{ steps.get_version.outputs.version }}-${{ env.ARCH }}.flatpak
