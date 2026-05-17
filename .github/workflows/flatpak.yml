@@ -32,11 +32,12 @@ jobs:
             version="${GITHUB_REF_NAME//\//-}-${GITHUB_SHA::8}"
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "bundle=sdrangel-$version-$ARCH.flatpak" >> "$GITHUB_OUTPUT"
+          echo "bundle=sdrangel-$version-${{ env.ARCH }}.flatpak" >> "$GITHUB_OUTPUT"
       - name: Validate runner architecture
         run: |
-          if [[ "$(uname -m)" != "$ARCH" ]]; then
-            echo "Expected architecture $ARCH but got $(uname -m)" >&2
+          expected_arch="${{ env.ARCH }}"
+          if [[ "$(uname -m)" != "$expected_arch" ]]; then
+            echo "Expected architecture $expected_arch but got $(uname -m)" >&2
             exit 1
           fi
       - name: Build Flatpak
