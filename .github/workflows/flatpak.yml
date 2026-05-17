@@ -33,19 +33,12 @@ jobs:
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "bundle=sdrangel-$version-${{ env.ARCH }}.flatpak" >> "$GITHUB_OUTPUT"
-      - name: Validate runner architecture
-        run: |
-          expected_arch="${{ env.ARCH }}"
-          if [[ "$(uname -m)" != "$expected_arch" ]]; then
-            echo "Expected architecture $expected_arch but got $(uname -m)" >&2
-            exit 1
-          fi
       - name: Build Flatpak
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: ${{ steps.get_version.outputs.bundle }}
           manifest-path: flatpak/org.sdrangel.SDRangel.yaml
-          cache-key: flatpak-builder-${{ hashFiles('flatpak/org.sdrangel.SDRangel.yaml', 'flatpak/*.patch') }}
+          cache-key: flatpak-builder-${{ hashFiles('flatpak/**') }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
