@@ -1,4 +1,4 @@
-name: SDRangel Flatpak build
+name: SDRangel Flatpak Build
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
         with:
           bundle: ${{ steps.get_version.outputs.bundle }}
           manifest-path: flatpak/org.sdrangel.SDRangel.yaml
-          cache-key: flatpak-builder-${{ github.sha }}
+          cache-key: flatpak-builder-${{ hashFiles('flatpak/org.sdrangel.SDRangel.yaml', 'flatpak/*.patch') }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
